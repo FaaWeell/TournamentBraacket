@@ -140,7 +140,7 @@ MIT License - bebas digunakan untuk project personal atau komersial.
 
 ## 📧 Contact
 
-Fajar - [@fajrios](https://github.com/fajrios)
+Fajri - [@FaaWeell](https://github.com/FaaWeell)
 
 ---
 
