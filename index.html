@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 Tournament Bracket Generator</title>
+    <meta name="description" content="Platform manajemen turnamen dengan bracket generation otomatis untuk futsal, e-sport, catur, dan kompetisi lainnya.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, #1e40af 100%);
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: -3rem auto 2rem;
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+        
+        .stat-icon.blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .stat-icon.yellow { background: rgba(251, 191, 36, 0.1); color: #f59e0b; }
+        .stat-icon.purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        
+        /* Sections */
+        .section {
+            padding: 3rem 0;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .section-title i {
+            color: var(--primary-light);
+        }
+        
+        /* Tournament Grid */
+        .tournament-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .tournament-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+        }
+        
+        .tournament-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+        
+        .tournament-card-header {
+            padding: 1.25rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+        
+        .tournament-card-header h3 {
+            color: white;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tournament-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.8125rem;
+            opacity: 0.9;
+        }
+        
+        .tournament-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .tournament-card-body {
+            padding: 1.25rem;
+        }
+        
+        .tournament-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tournament-info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+        }
+        
+        .tournament-info-row .label {
+            color: var(--gray-500);
+        }
+        
+        .tournament-info-row .value {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: var(--gray-100);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--radius-full);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-align: right;
+        }
+        
+        .tournament-card-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--gray-100);
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .tournament-card-footer .btn {
+            flex: 1;
+        }
+        
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+        }
+        
+        .feature-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.25rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-card p {
+            color: var(--gray-500);
+            font-size: 0.9375rem;
+        }
+        
+        /* Recent Champions */
+        .champions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .champion-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+        }
+        
+        .champion-item:hover {
+            box-shadow: var(--shadow);
+            transform: translateX(4px);
+        }
+        
+        .champion-medal {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+        
+        .champion-info {
+            flex: 1;
+        }
+        
+        .champion-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .champion-info p {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+            margin: 0;
+        }
+        
+        .champion-date {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+                margin: -2rem 1rem 1rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-trophy"></i>
+                <span>Tournament Bracket</span>
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="index.html" class="nav-link active">Beranda</a></li>
+                <li><a href="tournaments.html" class="nav-link">Turnamen</a></li>
+                <li><a href="create.html" class="nav-link">
+                    <i class="fas fa-plus"></i> Buat Baru
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-icon">🏆</div>
+            <h1>Tournament Bracket Generator</h1>
+            <p>Platform manajemen turnamen dengan bracket generation otomatis untuk futsal, e-sport, catur, dan berbagai kompetisi lainnya.</p>
+            <div class="hero-actions">
+                <a href="create.html" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-plus"></i>
+                    Buat Turnamen Baru
+                </a>
+                <a href="tournaments.html" class="btn btn-outline btn-lg" style="border-color: rgba(255,255,255,0.3); color: white;">
+                    <i class="fas fa-list"></i>
+                    Lihat Semua Turnamen
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <div class="container">
+        <div class="quick-stats" id="quickStats">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-trophy"></i></div>
+                <div class="stat-value" id="totalTournaments">0</div>
+                <div class="stat-label">Total Turnamen</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-play-circle"></i></div>
+                <div class="stat-value" id="ongoingTournaments">0</div>
+                <div class="stat-label">Sedang Berlangsung</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon yellow"><i class="fas fa-medal"></i></div>
+                <div class="stat-value" id="completedTournaments">0</div>
+                <div class="stat-label">Selesai</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-users"></i></div>
+                <div class="stat-value" id="totalParticipants">0</div>
+                <div class="stat-label">Total Peserta</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Active Tournaments -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-bolt"></i>
+                        Turnamen Aktif
+                    </h2>
+                    <a href="tournaments.html" class="btn btn-outline btn-sm">
+                        Lihat Semua <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div id="activeTournaments" class="tournament-grid">
+                    <!-- Will be populated by JS -->
+                </div>
+            </section>
+
+            <!-- Features -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-star"></i>
+                        Fitur Utama
+                    </h2>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <h3>Auto Generate Bracket</h3>
+                        <p>Otomatis membuat bagan turnamen dengan sistem gugur untuk 4-64 peserta.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h3>Real-time Update</h3>
+                        <p>Update skor langsung dan pemenang otomatis melaju ke babak selanjutnya.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Responsive Design</h3>
+                        <p>Akses dari perangkat apapun dengan tampilan yang optimal.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3>Champion Page</h3>
+                        <p>Halaman khusus untuk merayakan pemenang dengan animasi menarik.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Champions -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-medal"></i>
+                        Champion Terbaru
+                    </h2>
+                </div>
+                
+                <div id="recentChampions" class="champions-list">
+                    <!-- Will be populated by JS -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <i class="fas fa-trophy"></i>
+                <span>Tournament Bracket Generator</span>
+            </div>
+            <p>© 2024 - All rights reserved</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/database.js"></script>
+    <script src="js/tournament.js"></script>
+    <script src="js/participant.js"></script>
+    <script src="js/bracket.js"></script>
+    <script src="js/ui.js"></script>
+    
+    <script>
+        // Page initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            loadQuickStats();
+            loadActiveTournaments();
+            loadRecentChampions();
+        });
+
+        function loadQuickStats() {
+            const tournaments = TournamentService.getAll();
+            const participants = DB.getAll(DB.KEYS.PARTICIPANTS);
+            
+            document.getElementById('totalTournaments').textContent = tournaments.length;
+            document.getElementById('ongoingTournaments').textContent = 
+                tournaments.filter(t => t.status === 'ongoing').length;
+            document.getElementById('completedTournaments').textContent = 
+                tournaments.filter(t => t.status === 'completed').length;
+            document.getElementById('totalParticipants').textContent = participants.length;
+        }
+
+        function loadActiveTournaments() {
+            const container = document.getElementById('activeTournaments');
+            const tournaments = TournamentService.getAll()
+                .filter(t => t.status === 'ongoing' || t.status === 'registration')
+                .slice(0, 6);
+
+            if (tournaments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">🏆</div>
+                        <h3>Belum Ada Turnamen Aktif</h3>
+                        <p>Buat turnamen pertama Anda sekarang!</p>
+                        <a href="create.html" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Buat Turnamen
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = tournaments.map(t => {
+                const participants = ParticipantService.getByTournament(t.id);
+                const stats = TournamentService.getStats(t.id);
+                const typeData = TournamentService.TYPES[t.type] || TournamentService.TYPES.custom;
+                
+                return `
+                    <div class="tournament-card">
+                        <div class="tournament-card-header">
+                            <h3>
+                                <span>${typeData.icon}</span>
+                                ${t.name}
+                            </h3>
+                            <div class="tournament-meta">
+                                <span><i class="fas fa-users"></i> ${participants.length}/${t.participantCount}</span>
+                                <span><i class="fas fa-layer-group"></i> ${t.totalRounds || 0} babak</span>
+                            </div>
+                        </div>
+                        <div class="tournament-card-body">
+                            <div class="tournament-info">
+                                <div class="tournament-info-row">
+                                    <span class="label">Status</span>
+                                    <span class="value">${UI.renderStatusBadge(t.status)}</span>
+                                </div>
+                                <div class="tournament-info-row">
+                                    <span class="label">Jenis</span>
+                                    <span class="value">${typeData.label}</span>
+                                </div>
+                                ${stats ? `
+                                <div class="tournament-info-row">
+                                    <span class="label">Progress</span>
+                                    <span class="value">${stats.completedMatches}/${stats.totalMatches} match</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                            ${stats ? `
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" style="width: ${stats.progress}%"></div>
+                            </div>
+                            <div class="progress-text">${stats.progress}% selesai</div>
+                            ` : ''}
+                        </div>
+                        <div class="tournament-card-footer">
+                            <a href="tournament.html?id=${t.id}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye"></i> Lihat
+                            </a>
+                            <a href="bracket.html?id=${t.id}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-sitemap"></i> Bracket
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadRecentChampions() {
+            const container = document.getElementById('recentChampions');
+            const results = DB.getAll(DB.KEYS.RESULTS)
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 5);
+
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🏅</div>
+                        <h3>Belum Ada Champion</h3>
+                        <p>Jalankan turnamen untuk menentukan pemenang.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = results.map(result => {
+                const tournament = DB.getById(DB.KEYS.TOURNAMENTS, result.tournamentId);
+                const champion = DB.getById(DB.KEYS.PARTICIPANTS, result.championId);
+                
+                if (!tournament || !champion) return '';
+                
+                return `
+                    <a href="champion.html?id=${tournament.id}" class="champion-item">
+                        <div class="champion-medal">🏆</div>
+                        <div class="champion-info">
+                            <h4>${champion.name}</h4>
+                            <p>${tournament.name}</p>
+                        </div>
+                        <div class="champion-date">${UI.formatDate(result.createdAt)}</div>
+                    </a>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>

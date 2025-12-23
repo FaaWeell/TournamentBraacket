@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Turnamen | Tournament Bracket Generator</title>
+    <meta name="description" content="Kelola turnamen, peserta, dan jadwal pertandingan.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .tournament-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .tournament-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tournament-title-section h1 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tournament-badges {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .tournament-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin: -1.5rem 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .tab:hover {
+            background: var(--gray-50);
+            color: var(--gray-800);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-box-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-box-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .stat-box-label {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+        }
+
+        /* Participants Table */
+        .participants-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .participants-table {
+            width: 100%;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .participants-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .participants-table th,
+        .participants-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .participants-table th {
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-600);
+            font-size: 0.8125rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .participants-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .participants-table tr:hover td {
+            background: var(--gray-50);
+        }
+
+        .participant-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .participant-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius);
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+        }
+
+        .action-btn.edit {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .action-btn.edit:hover {
+            background: var(--info);
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .action-btn.delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Info Section */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .info-card-header {
+            padding: 1rem 1.25rem;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-100);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-card-body {
+            padding: 1.25rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: var(--gray-500);
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tournament-header-content {
+                flex-direction: column;
+            }
+
+            .tournament-title-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .participants-table {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-trophy"></i>
+                <span>Tournament Bracket</span>
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="index.html" class="nav-link">Beranda</a></li>
+                <li><a href="tournaments.html" class="nav-link">Turnamen</a></li>
+                <li><a href="create.html" class="nav-link">
+                        <i class="fas fa-plus"></i> Buat Baru
+                    </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Tournament Header -->
+    <header class="tournament-header">
+        <div class="container tournament-header-content">
+            <div class="tournament-title-section">
+                <h1 id="tournamentName">
+                    <span id="tournamentIcon">🏆</span>
+                    <span id="tournamentTitle">Loading...</span>
+                </h1>
+                <div class="tournament-badges">
+                    <span id="typeBadge" class="badge badge-primary"></span>
+                    <span id="statusBadge" class="status-badge"></span>
+                </div>
+            </div>
+            <div class="tournament-actions" id="tournamentActions">
+                <!-- Actions will be inserted here -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="overview">
+                    <i class="fas fa-chart-pie"></i> Overview
+                </button>
+                <button class="tab" data-tab="participants">
+                    <i class="fas fa-users"></i> Peserta
+                </button>
+                <button class="tab" data-tab="bracket">
+                    <i class="fas fa-sitemap"></i> Bracket
+                </button>
+                <button class="tab" data-tab="settings">
+                    <i class="fas fa-cog"></i> Pengaturan
+                </button>
+            </div>
+
+            <!-- Tab: Overview -->
+            <div class="tab-content active" id="tab-overview">
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Stats will be inserted here -->
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            <i class="fas fa-info-circle"></i> Informasi Turnamen
+                        </div>
+                        <div class="info-card-body" id="tournamentInfo">
+                            <!-- Info will be inserted here -->
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            <i class="fas fa-file-alt"></i> Deskripsi
+                        </div>
+                        <div class="info-card-body">
+                            <p id="tournamentDescription" style="color: var(--gray-600); margin: 0;">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Participants -->
+            <div class="tab-content" id="tab-participants">
+                <div class="participants-header">
+                    <h3><i class="fas fa-users"></i> Daftar Peserta (<span id="participantCount">0</span>/<span
+                            id="maxParticipants">0</span>)</h3>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn btn-outline btn-sm" id="btnAutoSeed" disabled>
+                            <i class="fas fa-random"></i> Auto Seed
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="btnAddParticipant">
+                            <i class="fas fa-plus"></i> Tambah Peserta
+                        </button>
+                    </div>
+                </div>
+
+                <div class="participants-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Seed</th>
+                                <th>Nama</th>
+                                <th>Status</th>
+                                <th>Kontak</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="participantsTableBody">
+                            <!-- Participants will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Bracket -->
+            <div class="tab-content" id="tab-bracket">
+                <div id="bracketActions" style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <!-- Bracket actions will be inserted here -->
+                </div>
+                <div id="bracketPreview">
+                    <!-- Bracket preview will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Tab: Settings -->
+            <div class="tab-content" id="tab-settings">
+                <div class="card" style="max-width: 600px;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-cog"></i> Pengaturan Turnamen</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="settingsForm">
+                            <div class="form-group">
+                                <label class="form-label" for="editName">Nama Turnamen</label>
+                                <input type="text" id="editName" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="editDescription">Deskripsi</label>
+                                <textarea id="editDescription" class="form-textarea" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="editRules">Aturan</label>
+                                <textarea id="editRules" class="form-textarea" rows="3"></textarea>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label class="form-label" for="editStartDate">Tanggal Mulai</label>
+                                    <input type="date" id="editStartDate" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="editEndDate">Tanggal Selesai</label>
+                                    <input type="date" id="editEndDate" class="form-input">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Simpan Perubahan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mt-3" style="max-width: 600px; border: 2px solid var(--danger);">
+                    <div class="card-header" style="background: rgba(239,68,68,0.1);">
+                        <h3 style="color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> Zona Berbahaya
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p style="color: var(--gray-600); margin-bottom: 1rem;">Aksi berikut tidak dapat dibatalkan.
+                            Harap berhati-hati.</p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button class="btn btn-outline btn-sm" id="btnResetBracket">
+                                <i class="fas fa-undo"></i> Reset Bracket
+                            </button>
+                            <button class="btn btn-danger btn-sm" id="btnDeleteTournament">
+                                <i class="fas fa-trash"></i> Hapus Turnamen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Participant Modal -->
+    <div class="modal-overlay" id="addParticipantModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Tambah Peserta</h3>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="addParticipantForm">
+                    <div class="form-group">
+                        <label class="form-label required" for="participantName">Nama Peserta/Tim</label>
+                        <input type="text" id="participantName" class="form-input" required maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="participantSeed">Seed (Opsional)</label>
+                        <input type="number" id="participantSeed" class="form-input" min="1">
+                        <p class="form-help">Kosongkan untuk auto-assign</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="participantContact">Kontak</label>
+                        <input type="text" id="participantContact" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="participantEmail">Email</label>
+                        <input type="email" id="participantEmail" class="form-input">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline modal-close-btn">Batal</button>
+                <button class="btn btn-primary" id="btnSubmitParticipant">
+                    <i class="fas fa-plus"></i> Tambah
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal-overlay" id="adminLoginModal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #f59e0b, #fbbf24); color: white;">
+                <h3 style="color: white;"><i class="fas fa-lock"></i> Login Admin</h3>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--gray-600); margin-bottom: 1rem;">Turnamen ini dilindungi password. Masukkan
+                    password admin untuk mengelola turnamen.</p>
+                <div class="form-group">
+                    <label class="form-label" for="adminPasswordInput">Password Admin</label>
+                    <input type="password" id="adminPasswordInput" class="form-input"
+                        placeholder="Masukkan password...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline modal-close-btn">Batal</button>
+                <button class="btn btn-primary" id="btnAdminLogin">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Only Notice -->
+    <div id="viewOnlyNotice"
+        style="display: none; position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; padding: 12px 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 100; display: flex; align-items: center; gap: 12px;">
+        <i class="fas fa-eye"></i>
+        <div>
+            <strong>Mode Viewer</strong><br>
+            <small>Anda melihat sebagai pengunjung. <a href="#" id="btnShowAdminLogin"
+                    style="color: white; text-decoration: underline;">Login Admin</a></small>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <i class="fas fa-trophy"></i>
+                <span>Tournament Bracket Generator</span>
+            </div>
+            <p>© 2024 - All rights reserved</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/database.js"></script>
+    <script src="js/tournament.js"></script>
+    <script src="js/participant.js"></script>
+    <script src="js/bracket.js"></script>
+    <script src="js/ui.js"></script>
+
+    <script>
+        let tournament = null;
+        let isAdmin = false;
+        const tournamentId = UI.getParam('id');
+
+        if (!tournamentId) {
+            window.location.href = 'tournaments.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTournament();
+            initTabs();
+            initEventListeners();
+            checkAdminStatus();
+        });
+
+        function loadTournament() {
+            tournament = TournamentService.getById(tournamentId);
+
+            if (!tournament) {
+                UI.toast('Turnamen tidak ditemukan', 'error');
+                setTimeout(() => window.location.href = 'tournaments.html', 1000);
+                return;
+            }
+
+            renderHeader();
+            renderStats();
+            renderInfo();
+            renderParticipants();
+            renderBracket();
+            renderSettings();
+        }
+
+        function renderHeader() {
+            const typeData = TournamentService.TYPES[tournament.type] || TournamentService.TYPES.custom;
+
+            document.getElementById('tournamentIcon').textContent = typeData.icon;
+            document.getElementById('tournamentTitle').textContent = tournament.name;
+            document.getElementById('typeBadge').innerHTML = `${typeData.icon} ${typeData.label}`;
+            document.getElementById('statusBadge').className = `status-badge status-${tournament.status}`;
+            document.getElementById('statusBadge').textContent = TournamentService.STATUSES[tournament.status].label;
+
+            // Actions based on status
+            let actionsHtml = '';
+
+            if (tournament.status === 'completed') {
+                actionsHtml = `
+                    <a href="champion.html?id=${tournament.id}" class="btn btn-secondary">
+                        <i class="fas fa-crown"></i> Lihat Champion
+                    </a>
+                `;
+            } else {
+                actionsHtml = `
+                    <a href="bracket.html?id=${tournament.id}" class="btn btn-secondary">
+                        <i class="fas fa-sitemap"></i> Buka Bracket
+                    </a>
+                `;
+            }
+
+            document.getElementById('tournamentActions').innerHTML = actionsHtml;
+        }
+
+        function renderStats() {
+            const stats = TournamentService.getStats(tournamentId);
+
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-box-icon" style="background: rgba(59,130,246,0.1); color: #3b82f6;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-box-value">${tournament.participants.length}/${tournament.participantCount}</div>
+                    <div class="stat-box-label">Peserta</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-icon" style="background: rgba(16,185,129,0.1); color: #10b981;">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="stat-box-value">${stats?.completedMatches || 0}/${stats?.totalMatches || 0}</div>
+                    <div class="stat-box-label">Match Selesai</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-icon" style="background: rgba(251,191,36,0.1); color: #f59e0b;">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="stat-box-value">${tournament.currentRound}/${tournament.totalRounds || '-'}</div>
+                    <div class="stat-box-label">Round Saat Ini</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-icon" style="background: rgba(139,92,246,0.1); color: #8b5cf6;">
+                        <i class="fas fa-percent"></i>
+                    </div>
+                    <div class="stat-box-value">${stats?.progress || 0}%</div>
+                    <div class="stat-box-label">Progress</div>
+                </div>
+            `;
+        }
+
+        function renderInfo() {
+            document.getElementById('tournamentInfo').innerHTML = `
+                <div class="info-row">
+                    <span class="info-label">Status</span>
+                    <span class="info-value">${UI.renderStatusBadge(tournament.status)}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Jenis</span>
+                    <span class="info-value">${TournamentService.TYPES[tournament.type]?.label || tournament.type}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Maks Peserta</span>
+                    <span class="info-value">${tournament.participantCount}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Total Babak</span>
+                    <span class="info-value">${tournament.totalRounds || '-'}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Tanggal Mulai</span>
+                    <span class="info-value">${UI.formatDate(tournament.startDate)}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Tanggal Selesai</span>
+                    <span class="info-value">${UI.formatDate(tournament.endDate)}</span>
+                </div>
+            `;
+
+            document.getElementById('tournamentDescription').textContent =
+                tournament.description || 'Tidak ada deskripsi';
+        }
+
+        function renderParticipants() {
+            const participants = tournament.participants;
+
+            document.getElementById('participantCount').textContent = participants.length;
+            document.getElementById('maxParticipants').textContent = tournament.participantCount;
+
+            const canEdit = tournament.status === 'draft' || tournament.status === 'registration';
+            document.getElementById('btnAddParticipant').disabled = !canEdit || participants.length >= tournament.participantCount;
+            document.getElementById('btnAutoSeed').disabled = !canEdit || participants.length === 0;
+
+            if (participants.length === 0) {
+                document.getElementById('participantsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center" style="padding: 2rem; color: var(--gray-500);">
+                            <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                            Belum ada peserta
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            document.getElementById('participantsTableBody').innerHTML = participants.map(p => {
+                const statusColor = {
+                    active: 'success',
+                    eliminated: 'danger',
+                    withdrawn: 'gray'
+                }[p.status] || 'gray';
+
+                return `
+                    <tr>
+                        <td><span class="badge badge-gray">${p.seed || '-'}</span></td>
+                        <td>
+                            <div class="participant-name">
+                                <div class="participant-avatar">${UI.getInitials(p.name)}</div>
+                                <span>${p.name}</span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-${statusColor}">${ParticipantService.STATUSES[p.status]?.label || p.status}</span></td>
+                        <td style="color: var(--gray-500);">${p.contactPerson || p.email || '-'}</td>
+                        <td>
+                            <div class="action-btns">
+                                ${canEdit ? `
+                                <button class="action-btn edit" onclick="editParticipant('${p.id}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete" onclick="deleteParticipant('${p.id}')" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                ` : '-'}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderBracket() {
+            const container = document.getElementById('bracketPreview');
+            const actionsContainer = document.getElementById('bracketActions');
+
+            if (tournament.status === 'draft') {
+                const canGenerate = tournament.participants.length >= 2;
+
+                actionsContainer.innerHTML = `
+                    <button class="btn btn-primary" id="btnGenerateBracket" ${!canGenerate ? 'disabled' : ''}>
+                        <i class="fas fa-magic"></i> Generate Bracket
+                    </button>
+                `;
+
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="fas fa-sitemap"></i></div>
+                        <h3>Bracket Belum Dibuat</h3>
+                        <p>Tambahkan peserta dan generate bracket untuk memulai turnamen.</p>
+                        ${!canGenerate ? '<p class="text-danger"><small>Minimal 2 peserta diperlukan</small></p>' : ''}
+                    </div>
+                `;
+
+                if (canGenerate) {
+                    document.getElementById('btnGenerateBracket').addEventListener('click', generateBracket);
+                }
+            } else if (tournament.status === 'registration') {
+                const canStart = TournamentService.canStart(tournamentId);
+
+                actionsContainer.innerHTML = `
+                    <a href="bracket.html?id=${tournament.id}" class="btn btn-outline">
+                        <i class="fas fa-external-link-alt"></i> Buka Bracket Penuh
+                    </a>
+                    <button class="btn btn-success" id="btnStartTournament" ${!canStart.canStart ? 'disabled' : ''}>
+                        <i class="fas fa-play"></i> Mulai Turnamen
+                    </button>
+                `;
+
+                container.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Bracket sudah dibuat!</strong><br>
+                            ${canStart.canStart
+                        ? 'Klik "Mulai Turnamen" untuk memulai kompetisi.'
+                        : canStart.reason
+                    }
+                        </div>
+                    </div>
+                `;
+
+                if (canStart.canStart) {
+                    document.getElementById('btnStartTournament').addEventListener('click', startTournament);
+                }
+            } else {
+                actionsContainer.innerHTML = `
+                    <a href="bracket.html?id=${tournament.id}" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt"></i> Buka Bracket Penuh
+                    </a>
+                `;
+
+                container.innerHTML = `
+                    <div class="alert alert-${tournament.status === 'completed' ? 'success' : 'info'}">
+                        <i class="fas fa-${tournament.status === 'completed' ? 'trophy' : 'play-circle'}"></i>
+                        <div>
+                            <strong>${tournament.status === 'completed' ? 'Turnamen Selesai!' : 'Turnamen Berlangsung'}</strong><br>
+                            ${tournament.status === 'completed'
+                        ? 'Lihat halaman champion untuk detail pemenang.'
+                        : 'Buka bracket untuk update skor pertandingan.'
+                    }
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderSettings() {
+            document.getElementById('editName').value = tournament.name;
+            document.getElementById('editDescription').value = tournament.description || '';
+            document.getElementById('editRules').value = tournament.rules || '';
+            document.getElementById('editStartDate').value = tournament.startDate || '';
+            document.getElementById('editEndDate').value = tournament.endDate || '';
+        }
+
+        function initTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+                });
+            });
+        }
+
+        function initEventListeners() {
+            // Add Participant
+            document.getElementById('btnAddParticipant').addEventListener('click', () => {
+                UI.openModal('addParticipantModal');
+            });
+
+            document.querySelectorAll('.modal-close, .modal-close-btn').forEach(btn => {
+                btn.addEventListener('click', () => UI.closeModal('addParticipantModal'));
+            });
+
+            document.getElementById('btnSubmitParticipant').addEventListener('click', addParticipant);
+
+            // Auto Seed
+            document.getElementById('btnAutoSeed').addEventListener('click', async () => {
+                const confirmed = await UI.confirm({
+                    title: 'Auto Seed',
+                    message: 'Ini akan mengacak urutan seed semua peserta. Lanjutkan?',
+                    confirmText: 'Ya, Acak'
+                });
+
+                if (confirmed) {
+                    ParticipantService.autoSeed(tournamentId, 'random');
+                    UI.toast('Seed berhasil diacak!', 'success');
+                    loadTournament();
+                }
+            });
+
+            // Settings Form
+            document.getElementById('settingsForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveSettings();
+            });
+
+            // Reset Bracket
+            document.getElementById('btnResetBracket').addEventListener('click', async () => {
+                const confirmed = await UI.confirm({
+                    title: 'Reset Bracket',
+                    message: 'Ini akan menghapus semua data pertandingan. Peserta tidak akan dihapus. Lanjutkan?',
+                    confirmText: 'Ya, Reset',
+                    type: 'danger'
+                });
+
+                if (confirmed) {
+                    try {
+                        BracketService.reset(tournamentId);
+                        UI.toast('Bracket berhasil direset!', 'success');
+                        loadTournament();
+                    } catch (err) {
+                        UI.toast(err.message, 'error');
+                    }
+                }
+            });
+
+            // Delete Tournament
+            document.getElementById('btnDeleteTournament').addEventListener('click', async () => {
+                const confirmed = await UI.confirm({
+                    title: 'Hapus Turnamen',
+                    message: 'PERINGATAN: Semua data turnamen, peserta, dan pertandingan akan dihapus permanen. Aksi ini tidak dapat dibatalkan!',
+                    confirmText: 'Ya, Hapus Permanen',
+                    type: 'danger'
+                });
+
+                if (confirmed) {
+                    TournamentService.delete(tournamentId);
+                    UI.toast('Turnamen dihapus!', 'success');
+                    setTimeout(() => window.location.href = 'tournaments.html', 500);
+                }
+            });
+        }
+
+        function addParticipant() {
+            try {
+                const data = {
+                    name: document.getElementById('participantName').value,
+                    seed: document.getElementById('participantSeed').value ?
+                        parseInt(document.getElementById('participantSeed').value) : null,
+                    contactPerson: document.getElementById('participantContact').value,
+                    email: document.getElementById('participantEmail').value
+                };
+
+                ParticipantService.add(tournamentId, data);
+
+                UI.closeModal('addParticipantModal');
+                UI.toast('Peserta berhasil ditambahkan!', 'success');
+
+                // Reset form
+                document.getElementById('addParticipantForm').reset();
+
+                loadTournament();
+            } catch (err) {
+                UI.toast(err.message, 'error');
+            }
+        }
+
+        function editParticipant(id) {
+            // For simplicity, just prompt for new name
+            const participant = ParticipantService.getById(id);
+            const newName = prompt('Nama baru:', participant.name);
+
+            if (newName && newName !== participant.name) {
+                try {
+                    ParticipantService.update(id, { name: newName });
+                    UI.toast('Peserta berhasil diupdate!', 'success');
+                    loadTournament();
+                } catch (err) {
+                    UI.toast(err.message, 'error');
+                }
+            }
+        }
+
+        async function deleteParticipant(id) {
+            const participant = ParticipantService.getById(id);
+            const confirmed = await UI.confirm({
+                title: 'Hapus Peserta',
+                message: `Hapus "${participant.name}" dari turnamen?`,
+                confirmText: 'Ya, Hapus',
+                type: 'danger'
+            });
+
+            if (confirmed) {
+                try {
+                    ParticipantService.delete(id);
+                    UI.toast('Peserta berhasil dihapus!', 'success');
+                    loadTournament();
+                } catch (err) {
+                    UI.toast(err.message, 'error');
+                }
+            }
+        }
+
+        async function generateBracket() {
+            try {
+                UI.loading(true, 'Generating bracket...');
+
+                // Generate bracket
+                BracketService.generate(tournamentId);
+
+                await new Promise(r => setTimeout(r, 500));
+
+                UI.loading(false);
+                UI.toast('Bracket berhasil dibuat!', 'success');
+
+                loadTournament();
+            } catch (err) {
+                UI.loading(false);
+                UI.toast(err.message, 'error');
+            }
+        }
+
+        async function startTournament() {
+            try {
+                UI.loading(true, 'Memulai turnamen...');
+
+                TournamentService.start(tournamentId);
+
+                await new Promise(r => setTimeout(r, 500));
+
+                UI.loading(false);
+                UI.toast('Turnamen dimulai!', 'success');
+
+                setTimeout(() => {
+                    window.location.href = `bracket.html?id=${tournamentId}`;
+                }, 500);
+            } catch (err) {
+                UI.loading(false);
+                UI.toast(err.message, 'error');
+            }
+        }
+
+        function saveSettings() {
+            try {
+                const data = {
+                    name: document.getElementById('editName').value,
+                    description: document.getElementById('editDescription').value,
+                    rules: document.getElementById('editRules').value,
+                    startDate: document.getElementById('editStartDate').value || null,
+                    endDate: document.getElementById('editEndDate').value || null
+                };
+
+                TournamentService.update(tournamentId, data);
+                UI.toast('Pengaturan berhasil disimpan!', 'success');
+
+                loadTournament();
+            } catch (err) {
+                UI.toast(err.message, 'error');
+            }
+        }
+
+        // ============================================
+        // ADMIN CONTROL FUNCTIONS
+        // ============================================
+
+        function checkAdminStatus() {
+            isAdmin = TournamentService.isAdmin(tournamentId);
+            updateUIForAdmin();
+        }
+
+        function updateUIForAdmin() {
+            const rawTournament = DB.getById(DB.KEYS.TOURNAMENTS, tournamentId);
+            const hasPassword = rawTournament && rawTournament.adminPassword;
+
+            // Show/hide view only notice
+            const viewOnlyNotice = document.getElementById('viewOnlyNotice');
+            if (hasPassword && !isAdmin) {
+                viewOnlyNotice.style.display = 'flex';
+            } else {
+                viewOnlyNotice.style.display = 'none';
+            }
+
+            // Hide/show admin-only elements
+            const adminOnlyElements = [
+                'btnAddParticipant',
+                'btnAutoSeed',
+                'btnGenerateBracket',
+                'btnStartTournament',
+                'btnResetBracket',
+                'btnDeleteTournament'
+            ];
+
+            adminOnlyElements.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (!isAdmin && hasPassword) {
+                        el.style.display = 'none';
+                    } else {
+                        el.style.display = '';
+                    }
+                }
+            });
+
+            // Hide settings tab for non-admin
+            const settingsTab = document.querySelector('[data-tab="settings"]');
+            if (settingsTab) {
+                if (!isAdmin && hasPassword) {
+                    settingsTab.style.display = 'none';
+                } else {
+                    settingsTab.style.display = '';
+                }
+            }
+
+            // Hide action buttons in participant rows
+            if (!isAdmin && hasPassword) {
+                document.querySelectorAll('.action-btns').forEach(el => {
+                    el.innerHTML = '<span style="color: var(--gray-400);">-</span>';
+                });
+            }
+
+            // Add admin badge to header if admin
+            if (isAdmin && hasPassword) {
+                const badges = document.querySelector('.tournament-badges');
+                if (badges && !document.getElementById('adminBadge')) {
+                    badges.innerHTML += '<span id="adminBadge" class="badge" style="background: linear-gradient(135deg, #f59e0b, #fbbf24); color: white;"><i class="fas fa-shield-alt"></i> Admin</span>';
+                }
+            }
+        }
+
+        function adminLogin() {
+            const password = document.getElementById('adminPasswordInput').value;
+
+            if (!password) {
+                UI.toast('Masukkan password', 'error');
+                return;
+            }
+
+            const success = TournamentService.authenticate(tournamentId, password);
+
+            if (success) {
+                isAdmin = true;
+                UI.closeModal('adminLoginModal');
+                UI.toast('Login berhasil! Anda sekarang admin.', 'success');
+                document.getElementById('adminPasswordInput').value = '';
+                loadTournament();
+                updateUIForAdmin();
+            } else {
+                UI.toast('Password salah!', 'error');
+            }
+        }
+
+        // Admin login button click
+        document.getElementById('btnAdminLogin').addEventListener('click', adminLogin);
+
+        // Enter key on password input
+        document.getElementById('adminPasswordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                adminLogin();
+            }
+        });
+
+        // Show admin login link
+        document.getElementById('btnShowAdminLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            UI.openModal('adminLoginModal');
+        });
+    </script>
+</body>
+
+</html>

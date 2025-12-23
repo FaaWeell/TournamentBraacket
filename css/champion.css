@@ -1,0 +1,630 @@
+/* ====================================
+   CHAMPION PAGE STYLES
+   Victory & Celebration Animations
+   ==================================== */
+
+/* -------- Champion Page Layout -------- */
+.champion-page {
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 50%, var(--gray-900) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.champion-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* -------- Confetti Animation -------- */
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--secondary);
+    top: -10px;
+    animation: confettiFall linear infinite;
+    z-index: 1;
+}
+
+.confetti:nth-child(1) {
+    left: 5%;
+    animation-duration: 4s;
+    animation-delay: 0s;
+    background: #ef4444;
+}
+
+.confetti:nth-child(2) {
+    left: 15%;
+    animation-duration: 5s;
+    animation-delay: 0.5s;
+    background: #fbbf24;
+}
+
+.confetti:nth-child(3) {
+    left: 25%;
+    animation-duration: 3.5s;
+    animation-delay: 1s;
+    background: #10b981;
+}
+
+.confetti:nth-child(4) {
+    left: 35%;
+    animation-duration: 4.5s;
+    animation-delay: 0.2s;
+    background: #3b82f6;
+}
+
+.confetti:nth-child(5) {
+    left: 45%;
+    animation-duration: 4s;
+    animation-delay: 0.8s;
+    background: #8b5cf6;
+}
+
+.confetti:nth-child(6) {
+    left: 55%;
+    animation-duration: 5.5s;
+    animation-delay: 0.3s;
+    background: #ec4899;
+}
+
+.confetti:nth-child(7) {
+    left: 65%;
+    animation-duration: 3.8s;
+    animation-delay: 0.7s;
+    background: #fbbf24;
+}
+
+.confetti:nth-child(8) {
+    left: 75%;
+    animation-duration: 4.2s;
+    animation-delay: 0.4s;
+    background: #ef4444;
+}
+
+.confetti:nth-child(9) {
+    left: 85%;
+    animation-duration: 4.8s;
+    animation-delay: 0.6s;
+    background: #10b981;
+}
+
+.confetti:nth-child(10) {
+    left: 95%;
+    animation-duration: 3.5s;
+    animation-delay: 0.9s;
+    background: #3b82f6;
+}
+
+/* -------- Champion Content -------- */
+.champion-content {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+}
+
+/* -------- Celebration Title -------- */
+.celebration-title {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--secondary);
+    margin-bottom: 1rem;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* -------- Trophy Container -------- */
+.trophy-container {
+    position: relative;
+    margin-bottom: 2rem;
+    animation: trophyAppear 0.8s ease-out 0.3s both;
+}
+
+@keyframes trophyAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.5) rotate(-10deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.trophy-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+}
+
+.trophy-icon {
+    position: relative;
+    font-size: 8rem;
+    color: var(--secondary);
+    text-shadow: 0 0 40px rgba(251, 191, 36, 0.5);
+    animation: trophyFloat 3s ease-in-out infinite;
+}
+
+@keyframes trophyFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(-2deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(2deg);
+    }
+}
+
+/* -------- Champion Info -------- */
+.champion-info {
+    animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.champion-title-text {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.champion-subtitle {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+}
+
+/* -------- Winner Card -------- */
+.winner-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-xl);
+    padding: 2rem 3rem;
+    margin-bottom: 2rem;
+    animation: cardAppear 0.8s ease-out 0.9s both;
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.winner-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.winner-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+}
+
+.winner-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+}
+
+.winner-medal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--secondary);
+    background: rgba(251, 191, 36, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+}
+
+/* -------- Podium -------- */
+.podium {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2rem 0;
+    animation: podiumAppear 0.8s ease-out 1.2s both;
+}
+
+@keyframes podiumAppear {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.podium-place {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.podium-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    box-shadow: var(--shadow-md);
+}
+
+.podium-place.first .podium-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 1.75rem;
+    border: 4px solid var(--secondary);
+}
+
+.podium-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.podium-stand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 1rem;
+    min-width: 80px;
+}
+
+.podium-place.first .podium-stand {
+    height: 120px;
+    background: linear-gradient(180deg, rgba(251, 191, 36, 0.4) 0%, rgba(251, 191, 36, 0.2) 100%);
+}
+
+.podium-place.second .podium-stand {
+    height: 90px;
+    background: linear-gradient(180deg, rgba(192, 192, 192, 0.4) 0%, rgba(192, 192, 192, 0.2) 100%);
+}
+
+.podium-place.third .podium-stand {
+    height: 60px;
+    background: linear-gradient(180deg, rgba(205, 127, 50, 0.4) 0%, rgba(205, 127, 50, 0.2) 100%);
+}
+
+.podium-rank {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--white);
+}
+
+/* -------- Stats Grid -------- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    width: 100%;
+    max-width: 600px;
+    margin: 2rem 0;
+    animation: statsAppear 0.8s ease-out 1.5s both;
+}
+
+@keyframes statsAppear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* -------- Action Buttons -------- */
+.champion-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    animation: actionsAppear 0.8s ease-out 1.8s both;
+}
+
+@keyframes actionsAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.champion-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-decoration: none;
+}
+
+.champion-btn-primary {
+    background: var(--secondary);
+    color: var(--gray-900);
+}
+
+.champion-btn-primary:hover {
+    background: var(--secondary-light);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
+}
+
+.champion-btn-outline {
+    background: transparent;
+    color: var(--white);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.champion-btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: var(--white);
+}
+
+/* -------- Sparkle Effect -------- */
+.sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--white);
+    border-radius: 50%;
+    animation: sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.sparkle:nth-child(1) {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.sparkle:nth-child(2) {
+    top: 30%;
+    left: 85%;
+    animation-delay: 0.3s;
+}
+
+.sparkle:nth-child(3) {
+    top: 60%;
+    left: 15%;
+    animation-delay: 0.6s;
+}
+
+.sparkle:nth-child(4) {
+    top: 70%;
+    left: 90%;
+    animation-delay: 0.9s;
+}
+
+.sparkle:nth-child(5) {
+    top: 40%;
+    left: 5%;
+    animation-delay: 1.2s;
+}
+
+/* -------- Responsive -------- */
+@media (max-width: 768px) {
+    .trophy-icon {
+        font-size: 5rem;
+    }
+
+    .champion-title-text {
+        font-size: 2rem;
+    }
+
+    .winner-card {
+        padding: 1.5rem;
+    }
+
+    .winner-name {
+        font-size: 1.5rem;
+    }
+
+    .podium {
+        gap: 0.5rem;
+    }
+
+    .podium-avatar {
+        width: 50px;
+        height: 50px;
+    }
+
+    .podium-place.first .podium-avatar {
+        width: 60px;
+        height: 60px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .champion-actions {
+        flex-direction: column;
+    }
+
+    .champion-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* -------- Firework Effect -------- */
+.firework {
+    position: fixed;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    animation: fireworkExplode 1s ease-out forwards;
+    pointer-events: none;
+    z-index: 5;
+}
+
+@keyframes fireworkExplode {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(20);
+        opacity: 0;
+    }
+}

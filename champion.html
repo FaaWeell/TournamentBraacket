@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 Champion | Tournament Bracket Generator</title>
+    <meta name="description" content="Halaman champion turnamen dengan statistik dan perayaan kemenangan.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/champion.css">
+</head>
+
+<body>
+    <!-- Champion Page -->
+    <div class="champion-page" id="championPage">
+        <!-- Confetti -->
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+
+        <!-- Sparkles -->
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+
+        <!-- Content -->
+        <div class="champion-content">
+            <div class="celebration-title" id="tournamentName">Loading...</div>
+
+            <div class="trophy-container">
+                <div class="trophy-glow"></div>
+                <div class="trophy-icon">🏆</div>
+            </div>
+
+            <div class="champion-info">
+                <h1 class="champion-title-text">CHAMPION</h1>
+                <p class="champion-subtitle">Turnamen telah selesai!</p>
+            </div>
+
+            <div class="winner-card">
+                <div class="winner-logo" id="winnerLogo">?</div>
+                <h2 class="winner-name" id="winnerName">Loading...</h2>
+                <div class="winner-medal">
+                    <i class="fas fa-medal"></i>
+                    <span>Juara 1</span>
+                </div>
+            </div>
+
+            <!-- Podium -->
+            <div class="podium" id="podium">
+                <!-- Will be populated by JS -->
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid" id="statsGrid">
+                <!-- Will be populated by JS -->
+            </div>
+
+            <!-- Actions -->
+            <div class="champion-actions">
+                <a href="" id="btnViewBracket" class="champion-btn champion-btn-primary">
+                    <i class="fas fa-sitemap"></i>
+                    Lihat Bracket
+                </a>
+                <a href="tournaments.html" class="champion-btn champion-btn-outline">
+                    <i class="fas fa-list"></i>
+                    Semua Turnamen
+                </a>
+                <a href="create.html" class="champion-btn champion-btn-outline">
+                    <i class="fas fa-plus"></i>
+                    Turnamen Baru
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/database.js"></script>
+    <script src="js/tournament.js"></script>
+    <script src="js/participant.js"></script>
+    <script src="js/bracket.js"></script>
+    <script src="js/ui.js"></script>
+
+    <script>
+        const tournamentId = UI.getParam('id');
+
+        if (!tournamentId) {
+            window.location.href = 'tournaments.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadChampionData();
+            createFireworks();
+        });
+
+        function loadChampionData() {
+            const tournament = TournamentService.getById(tournamentId);
+
+            if (!tournament) {
+                UI.toast('Turnamen tidak ditemukan', 'error');
+                setTimeout(() => window.location.href = 'tournaments.html', 1000);
+                return;
+            }
+
+            if (tournament.status !== 'completed') {
+                UI.toast('Turnamen belum selesai', 'warning');
+                setTimeout(() => window.location.href = `tournament.html?id=${tournamentId}`, 1000);
+                return;
+            }
+
+            const result = tournament.result;
+            if (!result) {
+                UI.toast('Data hasil tidak ditemukan', 'error');
+                return;
+            }
+
+            const champion = ParticipantService.getById(result.championId);
+            const runnerUp = ParticipantService.getById(result.runnerUpId);
+            const thirdPlaces = result.thirdPlaceIds?.map(id => ParticipantService.getById(id)).filter(Boolean) || [];
+
+            // Update tournament name
+            const typeData = TournamentService.TYPES[tournament.type] || TournamentService.TYPES.custom;
+            document.getElementById('tournamentName').textContent = `${typeData.icon} ${tournament.name}`;
+
+            // Update champion info
+            if (champion) {
+                document.getElementById('winnerLogo').textContent = UI.getInitials(champion.name);
+                document.getElementById('winnerName').textContent = champion.name;
+            }
+
+            // Update bracket link
+            document.getElementById('btnViewBracket').href = `bracket.html?id=${tournamentId}`;
+
+            // Render podium
+            renderPodium(champion, runnerUp, thirdPlaces[0]);
+
+            // Render stats
+            renderStats(tournament, result);
+        }
+
+        function renderPodium(champion, runnerUp, thirdPlace) {
+            const podium = document.getElementById('podium');
+
+            let html = '';
+
+            // Second Place (Left)
+            if (runnerUp) {
+                html += `
+                    <div class="podium-place second">
+                        <div class="podium-avatar" style="background: linear-gradient(135deg, #c0c0c0, #e8e8e8); color: #666;">
+                            ${UI.getInitials(runnerUp.name)}
+                        </div>
+                        <div class="podium-name">${runnerUp.name}</div>
+                        <div class="podium-stand">
+                            <span class="podium-rank">🥈</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // First Place (Center)
+            if (champion) {
+                html += `
+                    <div class="podium-place first">
+                        <div class="podium-avatar" style="background: linear-gradient(135deg, #fbbf24, #fcd34d); color: #92400e;">
+                            ${UI.getInitials(champion.name)}
+                        </div>
+                        <div class="podium-name">${champion.name}</div>
+                        <div class="podium-stand">
+                            <span class="podium-rank">🥇</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Third Place (Right)
+            if (thirdPlace) {
+                html += `
+                    <div class="podium-place third">
+                        <div class="podium-avatar" style="background: linear-gradient(135deg, #cd7f32, #daa520); color: #fff;">
+                            ${UI.getInitials(thirdPlace.name)}
+                        </div>
+                        <div class="podium-name">${thirdPlace.name}</div>
+                        <div class="podium-stand">
+                            <span class="podium-rank">🥉</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            podium.innerHTML = html;
+        }
+
+        function renderStats(tournament, result) {
+            const stats = TournamentService.getStats(tournamentId);
+
+            // Calculate duration
+            let duration = '-';
+            if (tournament.startDate && tournament.endDate) {
+                const start = new Date(tournament.startDate);
+                const end = new Date(tournament.endDate);
+                const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                duration = `${days} hari`;
+            }
+
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${result.totalParticipants}</div>
+                    <div class="stat-label">Peserta</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${result.totalMatches}</div>
+                    <div class="stat-label">Pertandingan</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${tournament.totalRounds}</div>
+                    <div class="stat-label">Babak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${duration}</div>
+                    <div class="stat-label">Durasi</div>
+                </div>
+            `;
+        }
+
+        function createFireworks() {
+            const colors = ['#ef4444', '#fbbf24', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+
+            function createFirework() {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.left = Math.random() * 100 + '%';
+                firework.style.top = Math.random() * 60 + '%';
+                firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+                document.getElementById('championPage').appendChild(firework);
+
+                setTimeout(() => firework.remove(), 1000);
+            }
+
+            // Create fireworks periodically
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createFirework, i * 300);
+            }
+
+            // Continue creating fireworks
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    createFirework();
+                }
+            }, 500);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buat Turnamen Baru | Tournament Bracket Generator</title>
+    <meta name="description"
+        content="Buat turnamen baru dengan mudah. Pilih jenis turnamen, jumlah peserta, dan mulai kompetisi.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .create-page {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+        }
+
+        .create-container {
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .create-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .create-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .create-header p {
+            color: var(--gray-500);
+        }
+
+        .create-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .create-card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 1.5rem 2rem;
+            color: white;
+        }
+
+        .create-card-header h2 {
+            color: white;
+            font-size: 1.25rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .create-card-body {
+            padding: 2rem;
+        }
+
+        /* Tournament Type Selection */
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .type-option {
+            position: relative;
+        }
+
+        .type-option input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .type-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            text-align: center;
+        }
+
+        .type-option label:hover {
+            border-color: var(--primary-light);
+            background: var(--gray-50);
+        }
+
+        .type-option input:checked+label {
+            border-color: var(--primary);
+            background: rgba(30, 58, 138, 0.05);
+        }
+
+        .type-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .type-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        /* Participant Count Selection */
+        .count-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem;
+        }
+
+        .count-option {
+            position: relative;
+        }
+
+        .count-option input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .count-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .count-option label:hover {
+            border-color: var(--primary-light);
+        }
+
+        .count-option input:checked+label {
+            border-color: var(--primary);
+            background: rgba(30, 58, 138, 0.05);
+        }
+
+        .count-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .count-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .form-actions .btn {
+            flex: 1;
+        }
+
+        /* Steps Indicator */
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            transition: all var(--transition);
+        }
+
+        .step.active {
+            background: var(--primary);
+            width: 30px;
+            border-radius: var(--radius-full);
+        }
+
+        .step.completed {
+            background: var(--success);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .type-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .count-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .create-card-body {
+                padding: 1.5rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-trophy"></i>
+                <span>Tournament Bracket</span>
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="index.html" class="nav-link">Beranda</a></li>
+                <li><a href="tournaments.html" class="nav-link">Turnamen</a></li>
+                <li><a href="create.html" class="nav-link active">
+                        <i class="fas fa-plus"></i> Buat Baru
+                    </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Create Form -->
+    <div class="create-page">
+        <div class="create-container">
+            <div class="create-header">
+                <h1>🏆 Buat Turnamen Baru</h1>
+                <p>Isi detail turnamen untuk memulai kompetisi</p>
+            </div>
+
+            <div class="create-card">
+                <div class="create-card-header">
+                    <h2>
+                        <i class="fas fa-edit"></i>
+                        Detail Turnamen
+                    </h2>
+                </div>
+
+                <div class="create-card-body">
+                    <form id="createTournamentForm">
+                        <!-- Tournament Name -->
+                        <div class="form-group">
+                            <label class="form-label required" for="name">Nama Turnamen</label>
+                            <input type="text" id="name" name="name" class="form-input"
+                                placeholder="Contoh: Futsal Championship 2024" maxlength="100" required>
+                            <p class="form-help">Maksimal 100 karakter</p>
+                        </div>
+
+                        <!-- Tournament Type -->
+                        <div class="form-group">
+                            <label class="form-label required">Jenis Turnamen</label>
+                            <div class="type-grid">
+                                <div class="type-option">
+                                    <input type="radio" name="type" id="type-futsal" value="futsal" required>
+                                    <label for="type-futsal">
+                                        <span class="type-icon">⚽</span>
+                                        <span class="type-name">Futsal</span>
+                                    </label>
+                                </div>
+                                <div class="type-option">
+                                    <input type="radio" name="type" id="type-esport" value="esport">
+                                    <label for="type-esport">
+                                        <span class="type-icon">🎮</span>
+                                        <span class="type-name">E-Sport</span>
+                                    </label>
+                                </div>
+                                <div class="type-option">
+                                    <input type="radio" name="type" id="type-chess" value="chess">
+                                    <label for="type-chess">
+                                        <span class="type-icon">♟️</span>
+                                        <span class="type-name">Catur</span>
+                                    </label>
+                                </div>
+                                <div class="type-option">
+                                    <input type="radio" name="type" id="type-custom" value="custom" checked>
+                                    <label for="type-custom">
+                                        <span class="type-icon">🏆</span>
+                                        <span class="type-name">Custom</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Participant Count -->
+                        <div class="form-group">
+                            <label class="form-label required">Jumlah Peserta</label>
+                            <div class="count-grid">
+                                <div class="count-option">
+                                    <input type="radio" name="participantCount" id="count-4" value="4">
+                                    <label for="count-4">
+                                        <span class="count-number">4</span>
+                                        <span class="count-label">peserta</span>
+                                    </label>
+                                </div>
+                                <div class="count-option">
+                                    <input type="radio" name="participantCount" id="count-8" value="8" checked>
+                                    <label for="count-8">
+                                        <span class="count-number">8</span>
+                                        <span class="count-label">peserta</span>
+                                    </label>
+                                </div>
+                                <div class="count-option">
+                                    <input type="radio" name="participantCount" id="count-16" value="16">
+                                    <label for="count-16">
+                                        <span class="count-number">16</span>
+                                        <span class="count-label">peserta</span>
+                                    </label>
+                                </div>
+                                <div class="count-option">
+                                    <input type="radio" name="participantCount" id="count-32" value="32">
+                                    <label for="count-32">
+                                        <span class="count-number">32</span>
+                                        <span class="count-label">peserta</span>
+                                    </label>
+                                </div>
+                                <div class="count-option">
+                                    <input type="radio" name="participantCount" id="count-64" value="64">
+                                    <label for="count-64">
+                                        <span class="count-number">64</span>
+                                        <span class="count-label">peserta</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <p class="form-help">Jumlah maksimal peserta yang bisa ikut</p>
+                        </div>
+
+                        <!-- Dates -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="startDate">Tanggal Mulai</label>
+                                <input type="date" id="startDate" name="startDate" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="endDate">Tanggal Selesai</label>
+                                <input type="date" id="endDate" name="endDate" class="form-input">
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label class="form-label" for="description">Deskripsi</label>
+                            <textarea id="description" name="description" class="form-textarea"
+                                placeholder="Deskripsi singkat tentang turnamen ini..." rows="3"></textarea>
+                        </div>
+
+                        <!-- Rules -->
+                        <div class="form-group">
+                            <label class="form-label" for="rules">Aturan/Rules</label>
+                            <textarea id="rules" name="rules" class="form-textarea"
+                                placeholder="Aturan dan ketentuan turnamen..." rows="3"></textarea>
+                        </div>
+
+                        <!-- Admin Password -->
+                        <div class="form-group"
+                            style="margin-top: 1.5rem; padding: 1.25rem; background: rgba(251, 191, 36, 0.1); border-radius: var(--radius); border: 2px solid rgba(251, 191, 36, 0.3);">
+                            <label class="form-label" for="adminPassword"
+                                style="display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-lock" style="color: #f59e0b;"></i>
+                                Password Admin (Opsional)
+                            </label>
+                            <input type="password" id="adminPassword" name="adminPassword" class="form-input"
+                                placeholder="Buat password untuk melindungi pengaturan turnamen...">
+                            <p class="form-help"><i class="fas fa-info-circle"></i> Jika di-set, hanya Anda yang bisa
+                                mengubah pengaturan turnamen. Pengunjung lain hanya bisa melihat bracket.</p>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="form-actions">
+                            <a href="index.html" class="btn btn-outline">
+                                <i class="fas fa-times"></i>
+                                Batal
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i>
+                                Buat Turnamen
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/database.js"></script>
+    <script src="js/tournament.js"></script>
+    <script src="js/participant.js"></script>
+    <script src="js/bracket.js"></script>
+    <script src="js/ui.js"></script>
+
+    <script>
+        const form = document.getElementById('createTournamentForm');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            try {
+                UI.loading(true, 'Membuat turnamen...');
+
+                // Get form data
+                const formData = new FormData(form);
+                const data = {
+                    name: formData.get('name'),
+                    type: formData.get('type'),
+                    participantCount: parseInt(formData.get('participantCount')),
+                    startDate: formData.get('startDate') || null,
+                    endDate: formData.get('endDate') || null,
+                    description: formData.get('description'),
+                    rules: formData.get('rules'),
+                    adminPassword: formData.get('adminPassword') || null
+                };
+
+                // Validate
+                if (!data.name) {
+                    throw new Error('Nama turnamen wajib diisi');
+                }
+
+                if (!data.type) {
+                    throw new Error('Pilih jenis turnamen');
+                }
+
+                if (!data.participantCount) {
+                    throw new Error('Pilih jumlah peserta');
+                }
+
+                // Create tournament
+                const tournament = TournamentService.create(data);
+
+                // Simulate loading
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                UI.loading(false);
+                UI.toast('Turnamen berhasil dibuat!', 'success');
+
+                // Redirect to tournament page
+                setTimeout(() => {
+                    window.location.href = `tournament.html?id=${tournament.id}`;
+                }, 500);
+
+            } catch (error) {
+                UI.loading(false);
+                UI.toast(error.message, 'error');
+            }
+        });
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').min = today;
+        document.getElementById('endDate').min = today;
+
+        // Update end date min when start date changes
+        document.getElementById('startDate').addEventListener('change', (e) => {
+            document.getElementById('endDate').min = e.target.value;
+        });
+    </script>
+</body>
+
+</html>

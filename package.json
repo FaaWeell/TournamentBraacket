@@ -1,0 +1,20 @@
+{
+  "name": "tournament-bracket-generator",
+  "version": "1.0.0",
+  "description": "Tournament Bracket Generator - Platform manajemen turnamen dengan bracket generation otomatis",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx live-server --port=3000",
+    "start": "npx live-server --port=3000"
+  },
+  "keywords": [
+    "tournament",
+    "bracket",
+    "generator",
+    "esport",
+    "futsal",
+    "chess"
+  ],
+  "author": "FaaDev",
+  "license": "MIT"
+}
